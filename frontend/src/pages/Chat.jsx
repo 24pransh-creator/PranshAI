@@ -19,7 +19,7 @@ function Chat() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/ai/chat",
+        "https://pranshai.onrender.com/api/ai/chat",
         {
           message: userMessage,
         }

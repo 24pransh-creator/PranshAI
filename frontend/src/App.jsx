@@ -15,7 +15,7 @@ function App() {
   const registerUser = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        "https://pranshai.onrender.com/api/auth/register",
         {
           name,
           email,
@@ -33,7 +33,7 @@ function App() {
   const loginUser = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://pranshai.onrender.com/api/auth/login",
         {
           email,
           password,
