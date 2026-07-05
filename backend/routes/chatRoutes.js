@@ -2,21 +2,37 @@ const express = require("express");
 const router = express.Router();
 const Chat = require("../models/Chat");
 
+// Get all chats
 router.get("/", async (req, res) => {
   try {
-    const chats = await Chat.find().sort({ createdAt: -1 });
+    const chats = await Chat.find().sort({ updatedAt: -1 });
     res.json(chats);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
+// Create new chat
+router.post("/", async (req, res) => {
+  try {
+    const chat = await Chat.create({
+      title: "New Chat",
+      messages: []
+    });
+
+    res.json(chat);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete chat
 router.delete("/:id", async (req, res) => {
   try {
     await Chat.findByIdAndDelete(req.params.id);
-    res.json({ message: "Chat deleted" });
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
 
