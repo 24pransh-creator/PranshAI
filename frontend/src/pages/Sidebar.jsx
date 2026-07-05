@@ -1,29 +1,50 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Sidebar({ onSelectChat }) {
   const [chats, setChats] = useState([]);
 
+  const loadChats = async () => {
+    try {
+      const res = await axios.get("https://pranshai.onrender.com/api/chat");
+      setChats(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
-    fetch("https://pranshai.onrender.com/api/chat")
-      .then((res) => res.json())
-      .then((data) => setChats(data))
-      .catch(console.error);
+    loadChats();
   }, []);
 
+  const newChat = async () => {
+    try {
+      const res = await axios.post("https://pranshai.onrender.com/api/chat");
+      loadChats();
+      onSelectChat(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
-    <div style={{
-      width: "300px",
-      background: "#202123",
-      color: "white",
-      height: "100vh",
-      overflowY: "auto",
-      padding: "10px"
-    }}>
+    <div
+      style={{
+        width: "280px",
+        background: "#202123",
+        color: "white",
+        padding: "15px",
+        height: "100vh",
+        overflowY: "auto"
+      }}
+    >
       <button
+        onClick={newChat}
         style={{
           width: "100%",
           padding: "10px",
-          marginBottom: "15px"
+          marginBottom: "15px",
+          cursor: "pointer"
         }}
       >
         + New Chat
@@ -39,7 +60,7 @@ export default function Sidebar({ onSelectChat }) {
             cursor: "pointer"
           }}
         >
-          {chat.userMessage.substring(0, 30)}...
+          {chat.title}
         </div>
       ))}
     </div>
