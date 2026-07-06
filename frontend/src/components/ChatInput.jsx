@@ -6,7 +6,8 @@ export default function ChatInput({
   sendMessage,
 }) {
   const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
       sendMessage();
     }
   };
@@ -15,7 +16,7 @@ export default function ChatInput({
     <div
       style={{
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-end",
         gap: "10px",
         padding: "15px",
         background: "#202123",
@@ -32,17 +33,22 @@ export default function ChatInput({
         📎
       </button>
 
-      <input
+      <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Message Pransh AI..."
+        rows={1}
         style={{
           flex: 1,
           padding: "12px",
           borderRadius: "10px",
           border: "none",
-          outline: "none"
+          outline: "none",
+          resize: "none",
+          minHeight: "24px",
+          maxHeight: "120px",
+          fontFamily: "inherit"
         }}
       />
 
