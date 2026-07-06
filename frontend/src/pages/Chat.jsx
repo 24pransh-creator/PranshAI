@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar";
+
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import ChatWindow from "../components/ChatWindow";
+import ChatInput from "../components/ChatInput";
 
 function Chat() {
   const [message, setMessage] = useState("");
@@ -49,54 +53,20 @@ function Chat() {
       <div
         style={{
           flex: 1,
-          background: "#0f172a",
-          color: "white",
-          padding: "20px",
+          display: "flex",
+          flexDirection: "column",
+          background: "#343541",
         }}
       >
-        <h1>🤖 Pransh AI</h1>
+        <Header />
 
-        <div
-          style={{
-            height: "75vh",
-            overflowY: "auto",
-            background: "#1e293b",
-            padding: "15px",
-            borderRadius: "10px",
-            marginBottom: "15px",
-          }}
-        >
-          {messages.map((msg, i) => (
-            <p key={i}>
-              <b>{msg.sender}:</b> {msg.text}
-            </p>
-          ))}
-        </div>
+        <ChatWindow messages={messages} />
 
-        <div style={{ display: "flex" }}>
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Ask anything..."
-            style={{
-              flex: 1,
-              padding: "12px",
-              borderRadius: "8px",
-              border: "none",
-            }}
-          />
-
-          <button
-            onClick={sendMessage}
-            style={{
-              padding: "12px 20px",
-              marginLeft: "10px",
-              borderRadius: "8px",
-            }}
-          >
-            Send
-          </button>
-        </div>
+        <ChatInput
+          message={message}
+          setMessage={setMessage}
+          sendMessage={sendMessage}
+        />
       </div>
     </div>
   );
