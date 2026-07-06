@@ -5,6 +5,32 @@ export default function ChatInput({
   setMessage,
   sendMessage,
 }) {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const startVoice = () => {
+    if (!SpeechRecognition) {
+      alert("Voice recognition is not supported on this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event) => {
+      const text = event.results[0][0].transcript;
+      setMessage(text);
+    };
+
+    recognition.onerror = (event) => {
+      console.log(event.error);
+    };
+
+    recognition.start();
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -20,14 +46,14 @@ export default function ChatInput({
         gap: "10px",
         padding: "15px",
         background: "#202123",
-        borderTop: "1px solid #444"
+        borderTop: "1px solid #444",
       }}
     >
       <button
         style={{
           padding: "10px",
           borderRadius: "8px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         📎
@@ -48,15 +74,16 @@ export default function ChatInput({
           resize: "none",
           minHeight: "24px",
           maxHeight: "120px",
-          fontFamily: "inherit"
+          fontFamily: "inherit",
         }}
       />
 
       <button
+        onClick={startVoice}
         style={{
           padding: "10px",
           borderRadius: "8px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         🎤
@@ -70,7 +97,7 @@ export default function ChatInput({
           background: "#10a37f",
           color: "white",
           border: "none",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         ➤
