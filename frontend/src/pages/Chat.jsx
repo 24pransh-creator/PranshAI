@@ -5,10 +5,12 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import ChatWindow from "../components/ChatWindow";
 import ChatInput from "../components/ChatInput";
+import TypingIndicator from "../components/TypingIndicator";
 
 function Chat() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [typing, setTyping] = useState(false);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -21,12 +23,15 @@ function Chat() {
     ]);
 
     setMessage("");
+    setTyping(true);
 
     try {
       const res = await axios.post(
         "https://pranshai.onrender.com/api/ai/chat",
         { message: userMessage }
       );
+
+      setTyping(false);
 
       setMessages((prev) => [
         ...prev,
@@ -36,6 +41,8 @@ function Chat() {
         },
       ]);
     } catch (err) {
+      setTyping(false);
+
       setMessages((prev) => [
         ...prev,
         {
@@ -61,6 +68,8 @@ function Chat() {
         <Header />
 
         <ChatWindow messages={messages} />
+
+        {typing && <TypingIndicator />}
 
         <ChatInput
           message={message}
