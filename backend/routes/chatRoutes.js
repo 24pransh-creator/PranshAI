@@ -5,37 +5,24 @@ const Chat = require("../models/Chat");
 // Get all chats
 router.get("/", async (req, res) => {
   try {
-    const chats = await Chat.find()
-      .sort({ updatedAt: -1 });
-
+    const chats = await Chat.find().sort({ updatedAt: -1 });
     res.json(chats);
   } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Get one chat
+// Get single chat
 router.get("/:id", async (req, res) => {
   try {
     const chat = await Chat.findById(req.params.id);
-
-    if (!chat) {
-      return res.status(404).json({
-        error: "Chat not found",
-      });
-    }
-
     res.json(chat);
   } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 
-// Create new chat
+// Create chat
 router.post("/", async (req, res) => {
   try {
     const chat = await Chat.create({
@@ -45,9 +32,24 @@ router.post("/", async (req, res) => {
 
     res.json(chat);
   } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Rename chat
+router.put("/:id", async (req, res) => {
+  try {
+    const { title } = req.body;
+
+    const chat = await Chat.findByIdAndUpdate(
+      req.params.id,
+      { title },
+      { new: true }
+    );
+
+    res.json(chat);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -55,14 +57,9 @@ router.post("/", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     await Chat.findByIdAndDelete(req.params.id);
-
-    res.json({
-      success: true,
-    });
+    res.json({ success: true });
   } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
+    res.status(500).json({ error: err.message });
   }
 });
 
