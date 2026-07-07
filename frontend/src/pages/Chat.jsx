@@ -13,6 +13,19 @@ function Chat() {
   const [typing, setTyping] = useState(false);
   const [chatId, setChatId] = useState(null);
 
+  const openChat = async (chat) => {
+    try {
+      const res = await axios.get(
+        `https://pranshai.onrender.com/api/chat/${chat._id}`
+      );
+
+      setChatId(res.data._id);
+      setMessages(res.data.messages || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const sendMessage = async () => {
     if (!message.trim()) return;
 
@@ -63,7 +76,7 @@ function Chat() {
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
-      <Sidebar onSelectChat={() => {}} />
+      <Sidebar onSelectChat={openChat} />
 
       <div
         style={{
