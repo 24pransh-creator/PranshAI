@@ -7,7 +7,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 router.post("/chat", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, chatId } = req.body;
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
@@ -16,14 +16,38 @@ router.post("/chat", async (req, res) => {
     const result = await model.generateContent(message);
     const reply = result.response.text();
 
-    await Chat.create({
-      userMessage: message,
-      aiReply: reply,
+    let chat;
+
+    if (chatId) {
+      chat = await Chat.findById(chatId);
+    }
+
+    if (!chat) {
+      chat = await Chat.create({
+        title: message.substring(0, 30),
+        messages: [],
+      });
+    }
+
+    chat.messages.push({
+      sender: "You",
+      text: message,
     });
 
-    res.json({ reply });
+    chat.messages.push({
+      sender: "Pransh AI",
+      text: reply,
+    });
+
+    await chat.save();
+
+    res.json({
+      reply,
+      chatId: chat._id,
+    });
   } catch (err) {
     console.error(err);
+
     res.status(500).json({
       reply: "AI Error",
     });
