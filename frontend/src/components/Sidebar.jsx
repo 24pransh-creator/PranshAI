@@ -20,31 +20,36 @@ export default function Sidebar({ onSelectChat }) {
   }, []);
 
   const newChat = async () => {
-    try {
-      const res = await axios.post(
-        "https://pranshai.onrender.com/api/chat"
-      );
+    const res = await axios.post(
+      "https://pranshai.onrender.com/api/chat"
+    );
 
-      loadChats();
+    loadChats();
 
-      if (onSelectChat) {
-        onSelectChat(res.data);
-      }
-    } catch (err) {
-      console.log(err);
+    if (onSelectChat) {
+      onSelectChat(res.data);
     }
   };
 
-  const deleteChat = async (id) => {
-    try {
-      await axios.delete(
-        `https://pranshai.onrender.com/api/chat/${id}`
-      );
+  const renameChat = async (chat) => {
+    const title = prompt("Enter new chat name", chat.title);
 
-      loadChats();
-    } catch (err) {
-      console.log(err);
-    }
+    if (!title) return;
+
+    await axios.put(
+      `https://pranshai.onrender.com/api/chat/${chat._id}`,
+      { title }
+    );
+
+    loadChats();
+  };
+
+  const deleteChat = async (id) => {
+    await axios.delete(
+      `https://pranshai.onrender.com/api/chat/${id}`
+    );
+
+    loadChats();
   };
 
   return (
@@ -53,64 +58,74 @@ export default function Sidebar({ onSelectChat }) {
         width: "280px",
         background: "#202123",
         color: "white",
-        display: "flex",
-        flexDirection: "column",
         height: "100vh",
+        overflowY: "auto",
       }}
     >
       <button
         onClick={newChat}
         style={{
+          width: "90%",
           margin: "15px",
           padding: "12px",
+          border: "none",
           borderRadius: "10px",
           background: "#10a37f",
           color: "white",
-          border: "none",
           cursor: "pointer",
         }}
       >
         + New Chat
       </button>
 
-      <div
-        style={{
-          flex: 1,
-          overflowY: "auto",
-        }}
-      >
-        {chats.map((chat) => (
+      {chats.map((chat) => (
+        <div
+          key={chat._id}
+          style={{
+            padding: "12px",
+            borderBottom: "1px solid #333",
+          }}
+        >
           <div
-            key={chat._id}
+            onClick={() => onSelectChat(chat)}
             style={{
-              padding: "12px",
-              borderBottom: "1px solid #333",
+              cursor: "pointer",
+              marginBottom: "10px",
+            }}
+          >
+            💬 {chat.title}
+          </div>
+
+          <button
+            onClick={() => renameChat(chat)}
+            style={{
+              marginRight: "8px",
+              background: "#2563eb",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              padding: "6px 10px",
               cursor: "pointer",
             }}
           >
-            <div
-              onClick={() => onSelectChat && onSelectChat(chat)}
-            >
-              💬 {chat.title}
-            </div>
+            ✏️ Rename
+          </button>
 
-            <button
-              onClick={() => deleteChat(chat._id)}
-              style={{
-                marginTop: "8px",
-                background: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                padding: "5px 10px",
-                cursor: "pointer",
-              }}
-            >
-              🗑 Delete
-            </button>
-          </div>
-        ))}
-      </div>
+          <button
+            onClick={() => deleteChat(chat._id)}
+            style={{
+              background: "#dc2626",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              padding: "6px 10px",
+              cursor: "pointer",
+            }}
+          >
+            🗑 Delete
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
