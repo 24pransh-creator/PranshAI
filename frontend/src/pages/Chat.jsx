@@ -11,6 +11,7 @@ function Chat() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
+  const [chatId, setChatId] = useState(null);
 
   const sendMessage = async () => {
     if (!message.trim()) return;
@@ -28,10 +29,17 @@ function Chat() {
     try {
       const res = await axios.post(
         "https://pranshai.onrender.com/api/ai/chat",
-        { message: userMessage }
+        {
+          message: userMessage,
+          chatId,
+        }
       );
 
       setTyping(false);
+
+      if (res.data.chatId) {
+        setChatId(res.data.chatId);
+      }
 
       setMessages((prev) => [
         ...prev,
